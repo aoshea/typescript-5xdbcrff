@@ -4,7 +4,7 @@
   --select-bg: cornflowerblue;
   --select-text: white;
   --body-bg: hsl(45, 100%, 50%);
-  --bg-alt2: hsl(11, 60%, 60%);
+  --bg-alt2: hsl(11, 83%, 61%);
   --bg-alt: rgb(255, 138, 54);
   --bg-button: orangered;
   --serif: Georgia, 'Times New Roman', Times, serif;
@@ -157,7 +157,7 @@ footer.zz--strip {
   text-align: center;
   position: relative;
   color: var(--bg-alt);
-  font-family: var(--serif);
+  font-family: var(--sans-serif);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.15rem;
@@ -172,7 +172,7 @@ footer.zz--strip {
   left: 0;
   bottom: -4px;
   height: 2px;
-  background-color: var(--fg);
+  background-color: transparent;
 }
 
 .zz--strip span:nth-child(3) {
