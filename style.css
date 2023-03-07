@@ -1,0 +1,356 @@
+:root {
+  --bg: white;
+  --fg: #242424;
+  --select-bg: cornflowerblue;
+  --select-text: white;
+  --body-bg: hsl(45, 100%, 50%);
+  --bg-alt2: hsl(11, 80%, 60%);
+  --bg-alt: rgb(255, 138, 54);
+  --bg-button: orangered;
+  --serif: Georgia, 'Times New Roman', Times, serif;
+  --sans-serif: --apple-system, Helvetica, 'Helvetica Neue', sans-serif;
+  --border-width: 1px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1,
+h2 {
+  margin: 0;
+  padding: 0;
+  font-family: var(--serif);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.015rem;
+  text-align: center;
+}
+
+svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+svg polygon + text {
+  font-family: var(--sans-serif);
+  font-weight: 700;
+}
+
+.sansserif {
+  font-family: var(--sans-serif);
+  color: var(--fg);
+}
+
+html,
+body {
+  background-color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  touch-action: manipulation;
+}
+
+g[id^='b-'] {
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
+g[id^='b-'] rect,
+g[id^='b-'] polygon {
+  fill: white;
+  stroke: var(--fg);
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  transition-delay: 0;
+  transition-duration: 0.5s;
+  transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition-property: transform;
+}
+
+g[id^='b-']:active rect {
+  fill: var(--bg-alt2);
+}
+
+g[id^='b-'].inactive rect {
+  opacity: 0.5;
+}
+
+g[id^='b-'].active circle + circle {
+  opacity: 1;
+}
+
+g[id^='b-'].active circle:nth-child(1) {
+  animation-name: dash;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-delay: 200ms;
+  animation-iteration-count: 1;
+  animation-play-state: running;
+  animation-fill-mode: forwards;
+  animation-direction: alternate;
+}
+@keyframes dash {
+  from {
+    transform: rotate(0deg) scale(0.9);
+  }
+  to {
+    transform: rotate(180deg) scale(1);
+  }
+}
+/*
+
+g[id^='b-']:hover circle {
+  fill: var(--bg-alt2);
+  stroke: none;
+  transition: transform 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+g[id^='b-']:active circle {
+  fill: transparent;
+  stroke-dasharray: 3;
+  stroke-dashoffset: 12;
+  stroke: var(--bg-alt2);
+}
+
+g[id^='b-'].inactive circle {
+  fill: transparent;
+  stroke-dasharray: 3;
+  stroke-dashoffset: 12;
+  stroke: var(--bg-alt2);
+}
+
+.active circle {
+  animation-name: dash;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-in-out;
+  animation-delay: 200ms;
+  animation-iteration-count: 1;
+  animation-play-state: running;
+  animation-fill-mode: forwards;
+  animation-direction: alternate;
+}
+
+@keyframes dash {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
+*/
+
+g[id^='b-'].inactive text {
+  opacity: 0;
+}
+
+g[id^='b-'].active text {
+  opacity: 1;
+}
+
+g[id^='b-'] text {
+  fill: var(--fg);
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  user-select: none;
+  pointer-events: none;
+
+  transition-delay: 1s;
+  transition-duration: 1s;
+  transition-timing-function: ease-out;
+  transition-property: opacity;
+}
+
+g[id^='d-'] {
+  pointer-events: none;
+}
+g[id^='d-'] circle {
+  fill: rgba(0, 0, 0, 0);
+  stroke: rgba(0, 0, 0, 0);
+}
+g[id^='d-'] text {
+  pointer-events: none;
+  fill: rgba(0, 0, 0, 0);
+  stroke: rgba(0, 0, 0, 0);
+}
+
+.zz--heading {
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.015rem;
+}
+
+.zz--strip {
+  display: flex;
+  padding: 1rem 0.5rem;
+}
+
+footer.zz--strip {
+  border-top: var(--border-width) solid var(--bg-alt2);
+}
+
+.zz--strip span {
+  text-align: left;
+  background-color: transparent;
+  color: var(--fg);
+  position: relative;
+  font-family: var(--serif);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.15rem;
+  flex: 1 1 100%;
+}
+
+.zz--strip span:nth-child(1) {
+  text-align: left;
+  font-family: var(--sans-serif);
+  position: relative;
+  top: 2px;
+  letter-spacing: normal;
+}
+.zz--strip span:nth-child(2) {
+  text-align: center;
+  position: relative;
+  color: var(--bg-alt);
+  font-family: var(--serif);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.15rem;
+  flex-grow: 0;
+  flex-basis: 70%;
+}
+
+.zz--strip span:nth-child(2)::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  background-color: var(--fg);
+}
+
+.zz--strip span:nth-child(3) {
+  text-align: right;
+  font-family: var(--sans-serif);
+  position: relative;
+  top: 2px;
+  letter-spacing: normal;
+}
+
+.zz--input-container {
+  margin: 0 auto;
+  padding: 2rem 0 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.zz--input-container input {
+  border-radius: 0;
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  font-family: var(--sans-serif);
+  font-size: 40px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.zz--debug {
+  position: fixed;
+  top: 3rem;
+  left: 0;
+  font-family: monospace;
+  font-size: 10px;
+  opacity: 0.2;
+}
+
+.zz--controls {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.zz--controls button {
+  font-size: 24px;
+  appearance: none;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--bg-alt);
+  color: var(--fg);
+  margin: 0.25rem 0.25rem 1rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.zz--controls button:nth-child(2) {
+  padding: 0.25rem 2rem;
+}
+
+.zz--plums {
+  position: absolute;
+  top: 4rem;
+  right: 0;
+  left: 0;
+  text-align: center;
+}
+
+.zz--plum {
+  position: relative;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border-radius: 8px;
+  border: 2px solid var(--bg-alt);
+  color: var(--fg);
+  font-family: var(--sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15rem;
+  opacity: 0;
+  transform: translateY(20px);
+  box-shadow: 0 2px 4px 2px rgba(0, 0, 0, 0.1);
+  animation-duration: 2.5s;
+  animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation-delay: 200ms;
+  animation-iteration-count: 1;
+  animation-play-state: running;
+  animation-fill-mode: forwards;
+}
+
+.zz--plum.show {
+  animation-name: showplum;
+}
+
+@keyframes showplum {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
