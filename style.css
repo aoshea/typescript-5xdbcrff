@@ -4,7 +4,7 @@
   --select-bg: cornflowerblue;
   --select-text: white;
   --body-bg: hsl(45, 100%, 50%);
-  --bg-alt2: hsl(11, 83%, 61%);
+  --bg-alt2: hsl(9, 21%, 82%);
   --bg-alt: rgb(255, 138, 54);
   --bg-button: orangered;
   --serif: Georgia, 'Times New Roman', Times, serif;
@@ -156,6 +156,7 @@ footer.zz--strip {
 .zz--strip span:nth-child(2) {
   text-align: center;
   position: relative;
+  top: 2px;
   color: var(--bg-alt);
   font-family: var(--sans-serif);
   font-size: 12px;
