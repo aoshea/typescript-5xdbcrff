@@ -1,12 +1,49 @@
 // Import stylesheets
 import './style.css';
 
+// max word len - TODO: get from wordset
+const MAX_CHARS = 8;
+
 // physics constants
 const FRICTION = 0.99995;
 const REST = 28;
 
 window.ZZ_INFO =
   'aeg|aegr|aegrs|adegrs|abdegrs|abdegirs,age|gear|rage|gears|rages|sarge|grades|badgers|abridges|brigades';
+
+// Tile class
+function Tile(char: string, position: number) {
+  this.char = char;
+  this.position = position;
+}
+
+Tile.prototype.getKey = function () {
+  return `g#b-${this.position}`;
+};
+
+// Tile element
+function TileView(index: number, handler) {
+  this.index = index;
+  this.handler = handler;
+  this.root_el = document.querySelector(this.getKey());
+  this.text_el = this.root_el.querySelector('text');
+  this.addListeners(handler);
+}
+
+TileView.prototype.getKey = function () {
+  return `g#b-${this.index}`;
+};
+
+TileView.prototype.addListeners = function (handler) {
+  this.root_el.addEventListener('mousedown', handler, false);
+  this.root_el.addEventListener('mouseup', handler, false);
+  this.root_el.addEventListener('touchstart', handler, false);
+  this.root_el.addEventListener('touchend', handler, false);
+};
+
+TileView.prototype.drawText = function (char: string) {
+  this.text_el.textContent = char;
+};
 
 // point class
 function Point(x, y) {
@@ -75,12 +112,12 @@ Blob.prototype.update = function () {
 
 // constraints
 const constraints = [];
-// letter blobs
-const blobs = [];
-// letter blob els
-const blob_els = [];
-// letter blob text els
-const text_els = [];
+
+// tiles
+const tiles = [];
+// tile view representation indexed by id
+const tile_view_map = {};
+
 // game internal count
 let t = 0;
 // game input text
@@ -128,38 +165,12 @@ function init() {
 
   // create letter blobs
   for (let i = 0; i < 8; ++i) {
-    const { x, y } = getPointOnCircle(i);
-    blobs.push(new Blob(new Point(x, y), getChar(i)));
-    if (i > 0) {
-      // create constraint
-      const constraint = new Constraint(REST, blobs[i - 1].p, blobs[i].p);
-      constraints.push(constraint);
-    }
-  }
-  const constraint = new Constraint(
-    REST,
-    blobs[blobs.length - 1].p,
-    blobs[0].p
-  );
-  constraints.push(constraint);
-  for (let i = 0; i < 8; ++i) {
-    const blob_el = document.querySelector('g#b-' + i);
-    const text_el = blob_el.querySelector('text');
-    text_els.push(text_el);
-    // const debug_el = document.querySelector('g#d-' + i);
-    // debug_el.setAttribute('transform', `translate(${x}, ${y})`);
-    // blob_el.setAttribute('transform', `translate(${x}, ${y})`);
-    blob_el.addEventListener('mousedown', handler, false);
-    blob_el.addEventListener('mouseup', handler, false);
-    blob_el.addEventListener('touchstart', handler, false);
-    blob_el.addEventListener('touchend', handler, false);
+    tiles.push(new Tile(getChar(i), i));
 
-    if (i > 2) {
-      blob_el.classList.add('inactive');
-    }
-
-    blob_els.push(blob_el);
+    const tile_view = new TileView(i, handler);
+    tile_view_map[tile_view.getKey()] = tile_view;
   }
+
   // add listeners to buttons
   const delete_btn = document.querySelector('button[name="delete"]');
   const enter_btn = document.querySelector('button[name="enter"]');
@@ -167,9 +178,9 @@ function init() {
   delete_btn.addEventListener('click', handleDelete, false);
   enter_btn.addEventListener('click', handleEnter, false);
   shuffle_btn.addEventListener('click', handleShuffle, false);
+
   // init plum
   plumEl.addEventListener('animationend', () => {
-    console.log('animatione end!');
     plumEl.classList.remove('show');
   });
 
@@ -181,9 +192,11 @@ function advanceLevel() {
     const plumtexts = ['Nice!', 'Great!', 'Amazing!', 'Super!', 'Incredible!'];
     plumEl.textContent = plumtexts[game_level];
     plumEl.classList.add('show');
+
     ++game_level;
     // add letter to board
     // next available
+    /*
     const wordsets = window.ZZ_INFO.split(',')[0].split('|');
 
     let set = wordsets[game_level];
@@ -212,6 +225,7 @@ function advanceLevel() {
         }
       }
     }
+    */
   } else {
     plumEl.textContent = 'You win!';
     plumEl.classList.add('show');
@@ -249,6 +263,23 @@ function handleShuffle() {
   console.log('jumble the letters');
 }
 
+function getCharByPosition(position: number): string {
+  for (let i = 0; i < tiles.length; ++i) {
+    if (tiles[i].position === position) {
+      return tiles[i].char;
+    }
+  }
+  return '';
+}
+
+function addInput(char: string): boolean {
+  if (input.length < MAX_CHARS) {
+    input += char;
+    return true;
+  }
+  return false;
+}
+
 // handle click
 function handler(e) {
   e.stopPropagation();
@@ -259,16 +290,16 @@ function handler(e) {
       break;
     case 'touchend':
       if (touch) {
-        if (input.length < 8) {
-          input += e.currentTarget.textContent.trim();
-        }
+        const elementPosition = parseInt(e.currentTarget.id.split('-')[1], 10);
+        const char = getCharByPosition(elementPosition);
+        addInput(char);
       }
       break;
     case 'mouseup':
       if (!touch) {
-        if (input.length < 8) {
-          input += e.currentTarget.textContent.trim();
-        }
+        const elementPosition = parseInt(e.currentTarget.id.split('-')[1], 10);
+        const char = getCharByPosition(elementPosition);
+        addInput(char);
       }
       break;
     default:
@@ -292,26 +323,36 @@ function gameloop() {
 
 // update game
 function update() {
-  for (let i = 0; i < blobs.length; ++i) {
-    blobs[i].update();
+  for (let i = 0; i < tiles.length; ++i) {
+    tiles[i].update();
   }
+  /*
   for (let i = 0; i < constraints.length; ++i) {
     constraints[i].update();
   }
+  */
 }
 
 // draw game
 function draw() {
-  for (let i = 0; i < blobs.length; ++i) {
-    const b = blobs[i];
-    const b_el = blob_els[i];
-    const text_el = text_els[i];
+  for (let i = 0; i < tiles.length; ++i) {
+    const tile = tiles[i];
+    // get view for tile
+    const tile_view = tile_view_map[tile.getKey()];
+    tile_view.drawText(tile.char);
+  }
+  /*
+  for (let i = 0; i < tile_views.length; ++i) {
+    const b_el = tile_views[i];
+    const text_el = b_el.text_el;
+    
     if (b.char !== '' && text_el.textContent === '') {
       b_el.classList.remove('inactive');
       b_el.classList.add('active');
     }
     text_el.textContent = b.char;
   }
+  */
   ++t;
   renderInput();
 }
