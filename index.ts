@@ -21,6 +21,10 @@ Tile.prototype.getKey = function () {
   return `g#b-${this.position}`;
 };
 
+Tile.prototype.update = function () {
+  return false;
+};
+
 // Tile element
 function TileView(index: number, handler) {
   this.index = index;
@@ -290,21 +294,23 @@ function handler(e) {
       break;
     case 'touchend':
       if (touch) {
-        const elementPosition = parseInt(e.currentTarget.id.split('-')[1], 10);
-        const char = getCharByPosition(elementPosition);
-        addInput(char);
+        handleInput(e.currentTarget);
       }
       break;
     case 'mouseup':
       if (!touch) {
-        const elementPosition = parseInt(e.currentTarget.id.split('-')[1], 10);
-        const char = getCharByPosition(elementPosition);
-        addInput(char);
+        handleInput(e.currentTarget);
       }
       break;
     default:
       console.log('unhandled?', e.type);
   }
+}
+
+function handleInput(target) {
+  const elementPosition = parseInt(target.id.split('-')[1], 10);
+  const char = getCharByPosition(elementPosition);
+  addInput(char);
 }
 
 // debug looging
