@@ -461,6 +461,15 @@ function draw() {
   }
   ++t;
   renderInput();
+  renderUI();
+}
+
+function renderUI() {
+  const hint_btn = document.querySelector('button[name="hint"]');
+  hint_btn.textContent = `HINT - ${hints}`;
+  if (hints === 0) {
+    hint_btn.setAttribute('disabled', 'disabled');
+  }
 }
 
 // update input element

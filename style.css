@@ -90,7 +90,7 @@ g[id^='b-'].active.in-use polygon {
 }
 
 g[id^='b-'].active.hinted polygon {
-  fill: var(--bg-tile--broken);
+  fill: var(--bg-alt2);
 }
 
 g[id^='b-'].inactive rect {
@@ -257,6 +257,10 @@ footer.zz--strip {
   color: var(--fg);
   margin: 0.25rem 0.25rem 1rem;
   padding: 0.25rem 1rem;
+}
+
+.zz--controls button:disabled {
+  opacity: 0.5;
 }
 
 .zz--plums {
