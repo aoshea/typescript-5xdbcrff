@@ -12,6 +12,26 @@ window.ZZ_INFO =
   'aeg|aegr|aegrs|adegrs|abdegrs|abdegirs,age|gear|rage|gears|rages|sarge|grades|badgers|abridges|brigades';
 
 const wordsets = window.ZZ_INFO.split(',')[0].split('|');
+// order wordsets
+const ordered_wordsets = orderWordSets(wordsets);
+
+function orderWordSets(wordsets) {
+  const result = wordsets.slice(0, 1);
+  for (let i = 1; i < wordsets.length; ++i) {
+    const x = wordsets[i];
+    let prev = result[i - 1];
+    const chars = x.split('');
+    for (let j = 0; j < chars.length; ++j) {
+      const ch = chars[j];
+      if (prev.indexOf(ch) === -1) {
+        prev = prev + ch;
+      }
+    }
+    result.push(prev);
+  }
+  return result;
+}
+
 const answers = window.ZZ_INFO.split(',')[1].split('|');
 const grouped_answers = groupAnswersByLen(answers);
 
@@ -245,23 +265,16 @@ function advanceLevel() {
     ++game_level;
     // add letter to board
     // next available
-    let set = wordsets[game_level];
+    let set = ordered_wordsets[game_level];
 
-    // skip letters we already have, adding new 
-    while(set.length > 0) {
-      let char = set.charAt(0);
-      console.log('char', char);
-      set = set.substring(1);
-    }
-
-    console.log(wordsets);
-    console.log(game_level, set);
-    console.log('char at', set.charAt(set.length - 1));
-
-    // find next available tile
+    // skip letters we already have, adding new
+    // next latter?
+    const char = set.charAt(set.length - 1);
     const tile = tiles[set.length - 1];
 
     tile.show();
+
+    console.log('char to tile', char, tile);
 
     /*
     
@@ -302,7 +315,7 @@ function advanceLevel() {
 
 // get char by index
 function getChar(i) {
-  const set = wordsets[game_level];
+  const set = ordered_wordsets[game_level];
   const result = set.charAt(i);
   return result;
 }
