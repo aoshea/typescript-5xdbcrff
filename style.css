@@ -5,9 +5,10 @@
   --select-text: white;
   --body-bg: hsl(45, 100%, 50%);
   --bg-alt2: hsl(9, 21%, 82%);
-  --bg-alt3: hsl(9, 21%, 52%);
+  --bg-alt3: hsl(9, 79%, 74%);
   --bg-alt: rgb(255, 138, 54);
-  --bg-button: orangered;
+  --bg-button: rgb(255, 138, 54);
+  --bg-button-border: rgb(163, 88, 34);
   --bg-tile--active: orange;
   --bg-tile--active-in-use: hsl(9, 21%, 52%);
   --bg-tile--broken: hsl(9, 38%, 52%);
@@ -229,6 +230,11 @@ footer.zz--strip {
 .zz--controls {
   position: absolute;
   bottom: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.zz-controls div {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -237,18 +243,20 @@ footer.zz--strip {
 }
 
 .zz--controls button {
-  font-size: 24px;
   appearance: none;
-  border: none;
+  border: 4px solid var(--bg-alt);
   border-radius: 8px;
-  background-color: var(--bg-alt);
+  font-family: var(--sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15rem;
+  line-height: 1rem;
+  background-color: var(--bg-button);
+  box-shadow: -1px 2px 0 1px var(--bg-button-border);
   color: var(--fg);
   margin: 0.25rem 0.25rem 1rem;
-  padding: 0.25rem 0.5rem;
-}
-
-.zz--controls button:nth-child(2) {
-  padding: 0.25rem 2rem;
+  padding: 0.25rem 1rem;
 }
 
 .zz--plums {
