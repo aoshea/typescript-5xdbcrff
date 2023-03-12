@@ -5,8 +5,12 @@
   --select-text: white;
   --body-bg: hsl(45, 100%, 50%);
   --bg-alt2: hsl(9, 21%, 82%);
+  --bg-alt3: hsl(9, 21%, 52%);
   --bg-alt: rgb(255, 138, 54);
   --bg-button: orangered;
+  --bg-tile--active: orange;
+  --bg-tile--active-in-use: hsl(9, 21%, 52%);
+  --bg-tile--broken: hsl(9, 38%, 52%);
   --serif: Georgia, 'Times New Roman', Times, serif;
   --sans-serif: --apple-system, Helvetica, 'Helvetica Neue', sans-serif;
   --border-width: 1px;
@@ -75,8 +79,17 @@ g[id^='b-'] polygon {
 g[id^='b-']:active rect {
   fill: var(--bg-alt2);
 }
+
 g[id^='b-'].active polygon {
-  fill: var(--bg-alt);
+  fill: var(--bg-tile--active);
+}
+
+g[id^='b-'].active.in-use polygon {
+  fill: var(--bg-tile--active-in-use);
+}
+
+g[id^='b-'].broken polygon {
+  fill: var(--bg-tile--broken);
 }
 
 g[id^='b-'].inactive rect {

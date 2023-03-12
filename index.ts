@@ -92,7 +92,11 @@ TileView.prototype.drawText = function (char: string) {
   this.text_el.textContent = char;
 };
 
-TileView.prototype.drawState = function (pressed: boolean, char: string) {
+TileView.prototype.drawState = function (
+  pressed: boolean,
+  char: string,
+  char_in_use: boolean
+) {
   if (pressed) {
     this.root_el.classList.add('pressed');
   } else {
@@ -102,6 +106,11 @@ TileView.prototype.drawState = function (pressed: boolean, char: string) {
     this.root_el.classList.add('active');
   } else {
     this.root_el.classList.remove('active');
+  }
+  if (char_in_use) {
+    this.root_el.classList.add('in-use');
+  } else {
+    this.root_el.classList.remove('in-use');
   }
 };
 
@@ -180,8 +189,8 @@ const tile_view_map = {};
 
 // game internal count
 let t = 0;
-// game input text
-let input = '';
+// game input text indices
+let input_indices = [];
 // input state set initially
 let touch = false;
 // game level
@@ -281,19 +290,19 @@ function getChar(i) {
 
 // handle delete
 function handleDelete() {
-  if (input.length > 0) {
-    input = input.slice(0, input.length - 1);
+  if (input_indices.length > 0) {
+    input_indices.pop();
   }
 }
 
 function handleEnter() {
   const len = game_level + 3;
   const game_level_answers = answers.filter((x) => x.length === len);
-  console.log(game_level_answers);
-  if (game_level_answers.indexOf(input.toLowerCase()) !== -1) {
+  const input_value = getInputValue();
+  if (game_level_answers.indexOf(input_value.toLowerCase()) !== -1) {
     advanceLevel();
   }
-  input = '';
+  clearInput();
 }
 
 function getAvailableTileCount(list) {
@@ -337,9 +346,9 @@ function handleShuffle() {
   }
 }
 
-function addInput(char: string): boolean {
-  if (input.length < MAX_CHARS) {
-    input += char;
+function addInput(char_index: number): boolean {
+  if (input_indices.length < MAX_CHARS) {
+    input_indices.push(char_index);
     return true;
   }
   return false;
@@ -372,7 +381,9 @@ function handleInput(target) {
   const elementPosition = parseInt(target.id.split('-')[1], 10);
   const tile = tiles[elementPosition];
   tile.pressed = true;
-  addInput(tile.char);
+  if (input_indices.indexOf(tile.char_index) === -1) {
+    addInput(tile.char_index);
+  }
 }
 
 // debug looging
@@ -408,7 +419,11 @@ function draw() {
     const tile_view = tile_view_map[tile.getKey(i)];
 
     tile_view.drawText(tile.char);
-    tile_view.drawState(tile.pressed, tile.char);
+    tile_view.drawState(
+      tile.pressed,
+      tile.char,
+      input_indices.indexOf(tile.char_index) !== -1
+    );
   }
   ++t;
   renderInput();
@@ -416,5 +431,16 @@ function draw() {
 
 // update input element
 function renderInput() {
-  inputEl.setAttribute('value', input);
+  let input_value = getInputValue();
+  inputEl.setAttribute('value', input_value);
+}
+
+function getInputValue() {
+  return input_indices.map(getChar).join('');
+}
+
+function clearInput() {
+  while (input_indices.length > 0) {
+    input_indices.pop();
+  }
 }
