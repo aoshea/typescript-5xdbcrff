@@ -263,50 +263,9 @@ function advanceLevel() {
     plumEl.classList.add('show');
 
     ++game_level;
-    // add letter to board
-    // next available
-    let set = ordered_wordsets[game_level];
 
-    // skip letters we already have, adding new
-    // next latter?
-    const char = set.charAt(set.length - 1);
-    const tile = tiles[set.length - 1];
-
+    const tile = tiles[game_level + 2];
     tile.show();
-
-    console.log('char to tile', char, tile);
-
-    /*
-    
-
-    let set = wordsets[game_level];
-    while (set.length > 0) {
-      let char = set.charAt(set.length - 1);
-      set = set.slice(0, set.length - 1);
-      // already there?
-      const index = blobs.map((x) => x.char).indexOf(char);
-      if (index === -1) {
-        for (let i = 0; i < blobs.length; ++i) {
-          if (blobs[i].char === '') {
-            blobs[i].char = char;
-            break;
-          }
-        }
-      }
-    }
-
-    if (set.length > 0) {
-      for (let i = 0; i < set.length; ++i) {
-
-        for (let j = 0; j < blobs.length; ++j) {
-          if (blobs[j].char === '') {
-            blobs[j].char = set.charAt(i);
-            break;
-          }
-        }
-      }
-    }
-    */
   } else {
     plumEl.textContent = 'You win!';
     plumEl.classList.add('show');
