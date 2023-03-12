@@ -11,15 +11,37 @@ const REST = 28;
 window.ZZ_INFO =
   'aeg|aegr|aegrs|adegrs|abdegrs|abdegirs,age|gear|rage|gears|rages|sarge|grades|badgers|abridges|brigades';
 
+const wordsets = window.ZZ_INFO.split(',')[0].split('|');
+const answers = window.ZZ_INFO.split(',')[1].split('|');
+const grouped_answers = groupAnswersByLen(answers);
+
+function groupAnswersByLen(answers) {
+  const result = new Map();
+  for (let i = 0; i < answers.length; ++i) {
+    const len = answers[i].length;
+    if (result.has(len)) {
+      result.get(len).push(answers[i]);
+    } else {
+      result.set(len, [answers[i]]);
+    }
+  }
+  return result;
+}
+
 // Tile class
-function Tile(char: string, position: number) {
-  this.char = char;
-  this.position = position;
+function Tile(char_index: number) {
+  this.char_index = char_index;
+  // index of char set is index in array
+  // user input pressed?
   this.pressed = false;
 }
 
-Tile.prototype.getKey = function () {
-  return `g#b-${this.position}`;
+Tile.prototype.show = function () {
+  this.char = getChar(this.char_index);
+};
+
+Tile.prototype.getKey = function (index) {
+  return `g#b-${index}`;
 };
 
 Tile.prototype.update = function () {
@@ -27,8 +49,8 @@ Tile.prototype.update = function () {
 };
 
 // Tile element
-function TileView(index: number, handler) {
-  this.index = index;
+function TileView(position: number, handler) {
+  this.position = position;
   this.handler = handler;
   this.root_el = document.querySelector(this.getKey());
   this.text_el = this.root_el.querySelector('text');
@@ -36,7 +58,7 @@ function TileView(index: number, handler) {
 }
 
 TileView.prototype.getKey = function () {
-  return `g#b-${this.index}`;
+  return `g#b-${this.position}`;
 };
 
 TileView.prototype.addListeners = function (handler) {
@@ -132,7 +154,7 @@ Blob.prototype.update = function () {
 const constraints = [];
 
 // tiles
-const tiles = [];
+let tiles = [];
 // tile view representation indexed by id
 const tile_view_map = {};
 
@@ -189,7 +211,9 @@ function init() {
 
   // create letter blobs
   for (let i = 0; i < 8; ++i) {
-    tiles.push(new Tile(getChar(i), i));
+    const tile = new Tile(i);
+    tile.show();
+    tiles.push(tile);
 
     const tile_view = new TileView(i, handler);
     tile_view_map[tile_view.getKey()] = tile_view;
@@ -212,6 +236,7 @@ function init() {
 }
 
 function advanceLevel() {
+  // TODO: get the 5 from the wordset
   if (game_level < 5) {
     const plumtexts = ['Nice!', 'Great!', 'Amazing!', 'Super!', 'Incredible!'];
     plumEl.textContent = plumtexts[game_level];
@@ -220,8 +245,26 @@ function advanceLevel() {
     ++game_level;
     // add letter to board
     // next available
+    let set = wordsets[game_level];
+
+    // skip letters we already have, adding new 
+    while(set.length > 0) {
+      let char = set.charAt(0);
+      console.log('char', char);
+      set = set.substring(1);
+    }
+
+    console.log(wordsets);
+    console.log(game_level, set);
+    console.log('char at', set.charAt(set.length - 1));
+
+    // find next available tile
+    const tile = tiles[set.length - 1];
+
+    tile.show();
+
     /*
-    const wordsets = window.ZZ_INFO.split(',')[0].split('|');
+    
 
     let set = wordsets[game_level];
     while (set.length > 0) {
@@ -241,6 +284,7 @@ function advanceLevel() {
 
     if (set.length > 0) {
       for (let i = 0; i < set.length; ++i) {
+
         for (let j = 0; j < blobs.length; ++j) {
           if (blobs[j].char === '') {
             blobs[j].char = set.charAt(i);
@@ -258,7 +302,6 @@ function advanceLevel() {
 
 // get char by index
 function getChar(i) {
-  const wordsets = window.ZZ_INFO.split(',')[0].split('|');
   const set = wordsets[game_level];
   const result = set.charAt(i);
   return result;
@@ -272,7 +315,6 @@ function handleDelete() {
 }
 
 function handleEnter() {
-  const answers = window.ZZ_INFO.split(',')[1].split('|');
   const len = game_level + 3;
   const game_level_answers = answers.filter((x) => x.length === len);
   console.log(game_level_answers);
@@ -282,17 +324,45 @@ function handleEnter() {
   input = '';
 }
 
-function handleShuffle() {
-  console.log('jumble the letters');
-}
-
-function getTileByPosition(position: number) {
-  for (let i = 0; i < tiles.length; ++i) {
-    if (tiles[i].position === position) {
-      return tiles[i];
+function getAvailableTileCount(list) {
+  let count = 0;
+  for (let i = 0; i < list.length; ++i) {
+    if (list[i].char !== '') {
+      ++count;
     }
   }
-  return null;
+  return count;
+}
+
+function randomizeTiles(list) {
+  let arr = list.slice(0);
+  let n = getAvailableTileCount(arr);
+  let temp;
+  let random_index: number;
+  while (n) {
+    random_index = Math.floor(Math.random() * n--);
+    temp = arr[n];
+    arr[n] = arr[random_index];
+    arr[random_index] = temp;
+  }
+  return arr;
+}
+
+function handleShuffle() {
+  const curr = tiles.map((t) => t.char).join('');
+  const answer = grouped_answers.get(curr.length);
+
+  let iterations = 0;
+  let max_iterations = 100;
+  while (iterations < max_iterations) {
+    const randomized = randomizeTiles(tiles);
+    const randomized_text = randomized.map((t) => t.char).join('');
+    if (randomized_text !== curr && answer.indexOf(randomized_text) === -1) {
+      tiles = randomized;
+      break;
+    }
+    ++iterations;
+  }
 }
 
 function addInput(char: string): boolean {
@@ -328,7 +398,7 @@ function handler(e) {
 
 function handleInput(target) {
   const elementPosition = parseInt(target.id.split('-')[1], 10);
-  const tile = getTileByPosition(elementPosition);
+  const tile = tiles[elementPosition];
   tile.pressed = true;
   addInput(tile.char);
 }
@@ -363,7 +433,7 @@ function update() {
 function draw() {
   for (let i = 0; i < tiles.length; ++i) {
     const tile = tiles[i];
-    const tile_view = tile_view_map[tile.getKey()];
+    const tile_view = tile_view_map[tile.getKey(i)];
 
     tile_view.drawText(tile.char);
     tile_view.drawState(tile.pressed, tile.char);
