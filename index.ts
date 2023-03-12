@@ -15,6 +15,7 @@ window.ZZ_INFO =
 function Tile(char: string, position: number) {
   this.char = char;
   this.position = position;
+  this.pressed = false;
 }
 
 Tile.prototype.getKey = function () {
@@ -47,6 +48,19 @@ TileView.prototype.addListeners = function (handler) {
 
 TileView.prototype.drawText = function (char: string) {
   this.text_el.textContent = char;
+};
+
+TileView.prototype.drawState = function (pressed: boolean, char: string) {
+  if (pressed) {
+    this.root_el.classList.add('pressed');
+  } else {
+    this.root_el.classList.remove('pressed');
+  }
+  if (char) {
+    this.root_el.classList.add('active');
+  } else {
+    this.root_el.classList.remove('active');
+  }
 };
 
 // point class
@@ -130,6 +144,12 @@ let input = '';
 let touch = false;
 // game level
 let game_level = 0;
+
+function logger(...args) {
+  if (t % 3 === 0) {
+    console.log(...args);
+  }
+}
 
 // svg element
 const svgDiv: SVGElement = document.querySelector('svg');
@@ -252,7 +272,6 @@ function handleDelete() {
 }
 
 function handleEnter() {
-  console.log('compare ', input, 'with answer?');
   const answers = window.ZZ_INFO.split(',')[1].split('|');
   const len = game_level + 3;
   const game_level_answers = answers.filter((x) => x.length === len);
@@ -267,13 +286,13 @@ function handleShuffle() {
   console.log('jumble the letters');
 }
 
-function getCharByPosition(position: number): string {
+function getTileByPosition(position: number) {
   for (let i = 0; i < tiles.length; ++i) {
     if (tiles[i].position === position) {
-      return tiles[i].char;
+      return tiles[i];
     }
   }
-  return '';
+  return null;
 }
 
 function addInput(char: string): boolean {
@@ -309,8 +328,9 @@ function handler(e) {
 
 function handleInput(target) {
   const elementPosition = parseInt(target.id.split('-')[1], 10);
-  const char = getCharByPosition(elementPosition);
-  addInput(char);
+  const tile = getTileByPosition(elementPosition);
+  tile.pressed = true;
+  addInput(tile.char);
 }
 
 // debug looging
@@ -343,22 +363,11 @@ function update() {
 function draw() {
   for (let i = 0; i < tiles.length; ++i) {
     const tile = tiles[i];
-    // get view for tile
     const tile_view = tile_view_map[tile.getKey()];
+
     tile_view.drawText(tile.char);
+    tile_view.drawState(tile.pressed, tile.char);
   }
-  /*
-  for (let i = 0; i < tile_views.length; ++i) {
-    const b_el = tile_views[i];
-    const text_el = b_el.text_el;
-    
-    if (b.char !== '' && text_el.textContent === '') {
-      b_el.classList.remove('inactive');
-      b_el.classList.add('active');
-    }
-    text_el.textContent = b.char;
-  }
-  */
   ++t;
   renderInput();
 }
