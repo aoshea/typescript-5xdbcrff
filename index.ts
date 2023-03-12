@@ -54,7 +54,13 @@ function Tile(char_index: number) {
   // index of char set is index in array
   // user input pressed?
   this.pressed = false;
+  this.hinted = false;
 }
+
+Tile.prototype.hint = function () {
+  console.log('hint');
+  this.hinted = true;
+};
 
 Tile.prototype.show = function () {
   this.char = getChar(this.char_index);
@@ -95,7 +101,8 @@ TileView.prototype.drawText = function (char: string) {
 TileView.prototype.drawState = function (
   pressed: boolean,
   char: string,
-  char_in_use: boolean
+  char_in_use: boolean,
+  hinted: boolean
 ) {
   if (pressed) {
     this.root_el.classList.add('pressed');
@@ -111,6 +118,11 @@ TileView.prototype.drawState = function (
     this.root_el.classList.add('in-use');
   } else {
     this.root_el.classList.remove('in-use');
+  }
+  if (hinted) {
+    this.root_el.classList.add('hinted');
+  } else {
+    this.root_el.classList.remove('hinted');
   }
 };
 
@@ -195,6 +207,8 @@ let input_indices = [];
 let touch = false;
 // game level
 let game_level = 0;
+// hints
+let hints = 3;
 
 function logger(...args) {
   if (t % 3 === 0) {
@@ -252,9 +266,11 @@ function init() {
   const delete_btn = document.querySelector('button[name="delete"]');
   const enter_btn = document.querySelector('button[name="enter"]');
   const shuffle_btn = document.querySelector('button[name="shuffle"]');
+  const hint_btn = document.querySelector('button[name="hint"]');
   delete_btn.addEventListener('click', handleDelete, false);
   enter_btn.addEventListener('click', handleEnter, false);
   shuffle_btn.addEventListener('click', handleShuffle, false);
+  hint_btn.addEventListener('click', handleHint, false);
 
   // init plum
   plumEl.addEventListener('animationend', () => {
@@ -264,17 +280,26 @@ function init() {
   gameloop();
 }
 
-function advanceLevel() {
+function advanceLevel(is_hint = false) {
   // TODO: get the 5 from the wordset
   if (game_level < 5) {
-    const plumtexts = ['Nice!', 'Great!', 'Amazing!', 'Super!', 'Incredible!'];
-    plumEl.textContent = plumtexts[game_level];
-    plumEl.classList.add('show');
-
     ++game_level;
-
     const tile = tiles[game_level + 2];
     tile.show();
+
+    if (!is_hint) {
+      const plumtexts = [
+        'Nice!',
+        'Great!',
+        'Amazing!',
+        'Super!',
+        'Incredible!',
+      ];
+      plumEl.textContent = plumtexts[game_level];
+      plumEl.classList.add('show');
+    } else {
+      tile.hint();
+    }
   } else {
     plumEl.textContent = 'You win!';
     plumEl.classList.add('show');
@@ -303,6 +328,15 @@ function handleEnter() {
     advanceLevel();
   }
   clearInput();
+}
+
+function handleHint() {
+  if (hints > 0) {
+    if (game_level < 5) {
+      advanceLevel(true);
+      --hints;
+    }
+  }
 }
 
 function getAvailableTileCount(list) {
@@ -421,7 +455,8 @@ function draw() {
     tile_view.drawState(
       tile.pressed,
       tile.char,
-      input_indices.indexOf(tile.char_index) !== -1
+      input_indices.indexOf(tile.char_index) !== -1,
+      tile.hinted
     );
   }
   ++t;

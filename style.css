@@ -11,7 +11,7 @@
   --bg-button-border: rgb(163, 88, 34);
   --bg-tile--active: orange;
   --bg-tile--active-in-use: hsl(9, 21%, 52%);
-  --bg-tile--broken: hsl(9, 38%, 52%);
+  --bg-tile--broken: hsl(8, 18%, 52%);
   --serif: Georgia, 'Times New Roman', Times, serif;
   --sans-serif: --apple-system, Helvetica, 'Helvetica Neue', sans-serif;
   --border-width: 1px;
@@ -89,7 +89,7 @@ g[id^='b-'].active.in-use polygon {
   fill: var(--bg-tile--active-in-use);
 }
 
-g[id^='b-'].broken polygon {
+g[id^='b-'].active.hinted polygon {
   fill: var(--bg-tile--broken);
 }
 
