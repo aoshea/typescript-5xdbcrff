@@ -357,7 +357,6 @@ function addInput(char_index: number): boolean {
 // handle click
 function handler(e) {
   e.stopPropagation();
-  debug(e.type);
   switch (e.type) {
     case 'touchstart':
       touch = true;
