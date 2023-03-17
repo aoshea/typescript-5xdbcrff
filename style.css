@@ -10,7 +10,7 @@
   --bg-button: rgb(255, 138, 54);
   --bg-button-border: rgb(163, 88, 34);
   --bg-tile--active: orange;
-  --bg-tile--active-in-use: hsl(9, 21%, 52%);
+  --bg-tile--active-in-use: rgba(255, 255, 255, 0.3);
   --bg-tile--broken: hsl(8, 18%, 52%);
   --serif: Georgia, 'Times New Roman', Times, serif;
   --sans-serif: --apple-system, Helvetica, 'Helvetica Neue', sans-serif;
@@ -66,8 +66,13 @@ g[id^='b-'] {
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 }
 
+g[id^='b-'] polygon {
+  opacity: 0;
+}
+
 g[id^='b-'] rect,
 g[id^='b-'] polygon {
+  position: relative;
   fill: var(--bg-alt2);
   stroke: none;
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
@@ -77,32 +82,21 @@ g[id^='b-'] polygon {
   transition-property: transform;
 }
 
-g[id^='b-']:active rect {
-  fill: var(--bg-alt2);
+g[id^='b-'].in-use rect,
+g[id^='b-'].in-use text {
+  opacity: 0.35;
 }
 
-g[id^='b-'].active polygon {
+g[id^='b-'].active rect {
   fill: var(--bg-tile--active);
 }
 
-g[id^='b-'].active.in-use polygon {
-  fill: var(--bg-tile--active-in-use);
+g[id^='b-']:active rect {
+  opacity: 0.9;
 }
 
-g[id^='b-'].active.hinted polygon {
+g[id^='b-'].active.hinted rect {
   fill: var(--bg-alt2);
-}
-
-g[id^='b-'].inactive rect {
-  opacity: 0.5;
-}
-
-g[id^='b-'].inactive text {
-  opacity: 0;
-}
-
-g[id^='b-'].active text {
-  opacity: 1;
 }
 
 g[id^='b-'] text {
@@ -112,11 +106,6 @@ g[id^='b-'] text {
   text-transform: uppercase;
   user-select: none;
   pointer-events: none;
-
-  transition-delay: 1s;
-  transition-duration: 1s;
-  transition-timing-function: ease-out;
-  transition-property: opacity;
 }
 
 g[id^='d-'] {

@@ -289,13 +289,13 @@ function advanceLevel(is_hint = false) {
 
     if (!is_hint) {
       const plumtexts = [
-        'Nice!',
+        'Good!',
         'Great!',
         'Amazing!',
-        'Super!',
+        'Superb!',
         'Incredible!',
       ];
-      plumEl.textContent = plumtexts[game_level];
+      plumEl.textContent = plumtexts[game_level - 1];
       plumEl.classList.add('show');
     } else {
       tile.hint();
