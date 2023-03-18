@@ -58,7 +58,6 @@ function Tile(char_index: number) {
 }
 
 Tile.prototype.hint = function () {
-  console.log('hint');
   this.hinted = true;
 };
 
@@ -334,6 +333,7 @@ function handleHint() {
   if (hints > 0) {
     if (game_level < 5) {
       advanceLevel(true);
+      clearInput();
       --hints;
     }
   }
