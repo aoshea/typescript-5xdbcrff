@@ -21,6 +21,31 @@
   box-sizing: border-box;
 }
 
+.container {
+  height: calc(var(--vh) * 100);
+  background: white;
+  font-family: system-ui;
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+header {
+  height: 10%;
+  background-color: white;
+}
+
+article {
+  position: relative;
+  height: 80%;
+  background-color: pink;
+}
+
+footer {
+  height: 10%;
+  background-color: blue;
+}
+
 h1,
 h2 {
   margin: 0;
@@ -33,12 +58,23 @@ h2 {
   text-align: center;
 }
 
-svg {
+.svg-container {
   position: absolute;
   top: 0;
-  left: 0;
   right: 0;
+  left: 0;
   bottom: 0;
+  text-align: center;
+  display: flex;
+}
+
+svg {
+  margin: 0 auto;
+  width: auto;
+  height: 100%;
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: 100%;
 }
 
 svg polygon + text {
@@ -188,6 +224,8 @@ footer.zz--strip {
 }
 
 .zz--input-container {
+  position: fixed;
+  top: 30px;
   margin: 0 auto;
   padding: 2rem 0 0;
   width: 100%;
@@ -217,8 +255,6 @@ footer.zz--strip {
 }
 
 .zz--controls {
-  position: absolute;
-  bottom: 0;
   width: 100%;
   text-align: center;
 }
@@ -236,7 +272,7 @@ footer.zz--strip {
   border: 4px solid var(--bg-alt);
   border-radius: 8px;
   font-family: var(--sans-serif);
-  font-size: 12px;
+  font-size: 8px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.15rem;
@@ -246,6 +282,7 @@ footer.zz--strip {
   color: var(--fg);
   margin: 0.25rem 0.25rem 1rem;
   padding: 0.25rem 1rem;
+  padding: 0;
 }
 
 .zz--controls button:disabled {

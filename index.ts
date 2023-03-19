@@ -1,6 +1,22 @@
 // Import stylesheets
 import './style.css';
 
+main();
+
+function main() {
+  setLayoutHeight();
+  addListeners();
+}
+
+function addListeners() {
+  window.addEventListener('resize', setLayoutHeight);
+}
+
+function setLayoutHeight() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
 // max word len - TODO: get from wordset
 const MAX_CHARS = 8;
 
